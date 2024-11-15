@@ -22,7 +22,7 @@ return {
         dashboard.button("t", "  Neotree", ":Neotree toggle<Return>"),
         dashboard.button("n", "  New file", ":ene <BAR> startinsert <CR>"),
         dashboard.button("r", "  Recent file", ":Telescope oldfiles <CR>"),
-        dashboard.button("f", "󰥨  Find file", ":Telescope find_files <CR>"),
+        dashboard.button("f", "󰥨  Find file", ":Telescope find_files hidden=true<CR>"),
         dashboard.button("g", "󰱼  Find text", ":Telescope live_grep <CR>"),
         dashboard.button("s", "  Settings", ":e $MYVIMRC | :cd %:p:h | split . | wincmd k | pwd<CR>"),
         dashboard.button("q", "  Quit", ":qa<CR>"),

@@ -6,6 +6,7 @@ return {
     'nvim-lua/plenary.nvim',
     'nvim-tree/nvim-web-devicons',
     'MunifTanjim/nui.nvim',
+    "3rd/image.nvim",
   },
   cmd = 'Neotree',
   keys = {
@@ -68,17 +69,26 @@ return {
             conflict = "",
           },
         },
-      }
+      },
+      filesystem = {
+        filtered_items = {
+          visible = true,
+          show_hidden_count = true,
+          hide_dotfiles = false,
+          hide_gitignored = true,
+          hide_by_name = {
+            "node_modules",
+            "thumbs.db",
+          },
+         never_show = {
+          ".git",
+          ".DS_Store",
+         },
+        },
+      },
     })
   end,
   opts = {
-    filesystem = {
-      window = {
-        mappings = {
-          ['\\'] = 'close_window',
-        },
-      },
-    },
     buffers = {
       follow_current_file = {
         enabled = true, 
