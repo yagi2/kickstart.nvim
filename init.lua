@@ -589,6 +589,10 @@ require('lazy').setup({
       indent = { enable = true, disable = { 'ruby' } },
     },
   },
+  { -- Show image binary
+    "3rd/image.nvim",
+    opts = {}
+  },
 
   require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
@@ -615,5 +619,9 @@ require('lazy').setup({
       task = '📌',
       lazy = '💤 ',
     },
+  },
+}, {
+  rocks = {
+    hererocks = true,
   },
 })
