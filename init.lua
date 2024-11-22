@@ -79,6 +79,26 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+-- Use all of buffer to Copilot chat context
+function CopilotChatBuffer()
+  local input = vim.fn.input 'Quick Chat: '
+  if input ~= '' then
+    require('CopilotChat').ask(input, { selection = require('CopilotChat.select').buffer })
+  end
+end
+
+-- Ask Copilot Quickly in <leader>ccq (Copilot Chat Quick)
+vim.api.nvim_set_keymap('n', '<leader>ccq', '<cmd>lua CopilotChatBuffer()<cr>', { noremap = true, silent = true })
+
+-- Display Copilot Chat prompt with Telescope
+function ShowCopilotChatActionPrompt()
+  local actions = require 'CopilotChat.actions'
+  require('CopilotChat.integrations.telescope').pick(actions.prompt_actions())
+end
+
+-- Display Copilot Chat prompt in <leader>ccp (Copilot Chat Prompt)
+vim.api.nvim_set_keymap('n', '<leader>ccp', '<cmd>lua ShowCopilotChatActionPrompt()<cr>', { noremap = true, silent = true })
+
 -- [[ Basic Autocommands ]]
 -- Highlight when yanking (copying) text
 vim.api.nvim_create_autocmd('TextYankPost', {
@@ -183,7 +203,11 @@ require('lazy').setup({
       require('telescope').setup {
         defaults = {
           file_ignore_patterns = {
-            ".git", "node_modules", "build", "dist", "yarn.lock"
+            '.git',
+            'node_modules',
+            'build',
+            'dist',
+            'yarn.lock',
           },
         },
         extensions = {
@@ -293,7 +317,7 @@ require('lazy').setup({
           -- Rename the variable under your cursor.
           map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
 
-          -- Execute a code action, 
+          -- Execute a code action,
           map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
@@ -396,7 +420,7 @@ require('lazy').setup({
       -- You can add other tools here that you want Mason to install
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
-        'stylua', 
+        'stylua',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -506,7 +530,7 @@ require('lazy').setup({
               luasnip.expand_or_jump()
             end
           end, { 'i', 's' }),
-          
+
           -- <c-h> is similar, except moving you backwards.
           ['<C-h>'] = cmp.mapping(function()
             if luasnip.locally_jumpable(-1) then
@@ -517,13 +541,15 @@ require('lazy').setup({
           -- Accept completion with Tab if there is a character just before the cursor
           ['<Tab>'] = vim.schedule_wrap(function(fallback)
             local has_words_before = function()
-              if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+              if vim.api.nvim_buf_get_option(0, 'buftype') == 'prompt' then
+                return false
+              end
               local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-              return col ~= 0 and vim.api.nvim_buf_get_text(0, line-1, 0, line-1, col, {})[1]:match("^%s*$") == nil
+              return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match '^%s*$' == nil
             end
 
             if cmp.visible() and has_words_before() then
-              cmp.confirm({select = true})
+              cmp.confirm { select = true }
             else
               fallback()
             end
@@ -590,8 +616,8 @@ require('lazy').setup({
     },
   },
   { -- Show image binary
-    "3rd/image.nvim",
-    opts = {}
+    '3rd/image.nvim',
+    opts = {},
   },
 
   require 'kickstart.plugins.debug',
