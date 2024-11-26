@@ -6,6 +6,9 @@ vim.g.maplocalleader = ' '
 
 vim.g.have_nerd_font = true
 
+-- Enable 24bit color
+vim.opt.termguicolors = true
+
 -- [[ Setting options ]]
 -- Make line numbers default
 vim.opt.number = true
