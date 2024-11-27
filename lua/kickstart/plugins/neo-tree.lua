@@ -6,7 +6,7 @@ return {
     'nvim-lua/plenary.nvim',
     'nvim-tree/nvim-web-devicons',
     'MunifTanjim/nui.nvim',
-    "3rd/image.nvim",
+    '3rd/image.nvim',
   },
   cmd = 'Neotree',
   keys = {
@@ -14,10 +14,11 @@ return {
     { '<C-\\>', ':Neotree float buffers<CR>', desc = 'NeoTree reveal buffers', silent = true },
   },
   config = function()
-    require("neo-tree").setup({
+    require('neo-tree').setup {
+      update_cwd = false,
       close_if_last_window = false, -- Close Neo-tree if it is the last window left in the tab
-    	popup_border_style = "rounded",
-    	enable_git_status = true,
+      popup_border_style = 'rounded',
+      enable_git_status = true,
       default_component_configs = {
         container = {
           enable_character_fade = true,
@@ -27,46 +28,46 @@ return {
           padding = 1, -- extra padding on left hand side
           -- indent guides
           with_markers = true,
-          indent_marker = "│",
-          last_indent_marker = "└",
-          highlight = "NeoTreeIndentMarker",
+          indent_marker = '│',
+          last_indent_marker = '└',
+          highlight = 'NeoTreeIndentMarker',
           -- expander config, needed for nesting files
           with_expanders = nil, -- if nil and file nesting is enabled, will enable expanders
-          expander_collapsed = "",
-          expander_expanded = "",
-          expander_highlight = "NeoTreeExpander",
+          expander_collapsed = '',
+          expander_expanded = '',
+          expander_highlight = 'NeoTreeExpander',
         },
         icon = {
-          folder_closed = "",
-          folder_open = "",
-          folder_empty = "󰜌",
+          folder_closed = '',
+          folder_open = '',
+          folder_empty = '󰜌',
           -- The next two settings are only a fallback, if you use nvim-web-devicons and configure default icons there
           -- then these will never be used.
-          default = "*",
-          highlight = "NeoTreeFileIcon",
+          default = '*',
+          highlight = 'NeoTreeFileIcon',
         },
         modified = {
-          symbol = "[+]",
-          highlight = "NeoTreeModified",
+          symbol = '[+]',
+          highlight = 'NeoTreeModified',
         },
         name = {
           trailing_slash = false,
           use_git_status_colors = true,
-          highlight = "NeoTreeFileName",
+          highlight = 'NeoTreeFileName',
         },
         git_status = {
           symbols = {
             -- Change type
-            added = "✚", -- or "✚", but this is redundant info if you use git_status_colors on the name
-            modified = "", -- or "", but this is redundant info if you use git_status_colors on the name
-            deleted = "✖", -- this can only be used in the git_status source
-            renamed = "󰁕", -- this can only be used in the git_status source
+            added = '✚', -- or "✚", but this is redundant info if you use git_status_colors on the name
+            modified = '', -- or "", but this is redundant info if you use git_status_colors on the name
+            deleted = '✖', -- this can only be used in the git_status source
+            renamed = '󰁕', -- this can only be used in the git_status source
             -- Status type
-            untracked = "",
-            ignored = "",
-            unstaged = "󰄱",
-            staged = "",
-            conflict = "",
+            untracked = '',
+            ignored = '',
+            unstaged = '󰄱',
+            staged = '',
+            conflict = '',
           },
         },
       },
@@ -77,37 +78,37 @@ return {
           hide_dotfiles = false,
           hide_gitignored = true,
           hide_by_name = {
-            "node_modules",
-            "thumbs.db",
+            'node_modules',
+            'thumbs.db',
           },
-         never_show = {
-          ".git",
-          ".DS_Store",
-         },
+          never_show = {
+            '.git',
+            '.DS_Store',
+          },
         },
       },
-    })
+    }
   end,
   opts = {
     buffers = {
       follow_current_file = {
-        enabled = true, 
+        enabled = true,
         leave_dirs_open = false,
       },
       group_empty_dirs = true,
       show_unloaded = true,
       window = {
         mappings = {
-          ["bd"] = "buffer_delete",
-          ["<bs>"] = "navigate_up",
-          ["."] = "set_root",
-          ["o"] = { "show_help", nowait = false, config = { title = "Order by", prefix_key = "o" } },
-          ["oc"] = { "order_by_created", nowait = false },
-          ["od"] = { "order_by_diagnostics", nowait = false },
-          ["om"] = { "order_by_modified", nowait = false },
-          ["on"] = { "order_by_name", nowait = false },
-          ["os"] = { "order_by_size", nowait = false },
-          ["ot"] = { "order_by_type", nowait = false },
+          ['bd'] = 'buffer_delete',
+          ['<bs>'] = 'navigate_up',
+          ['.'] = 'set_root',
+          ['o'] = { 'show_help', nowait = false, config = { title = 'Order by', prefix_key = 'o' } },
+          ['oc'] = { 'order_by_created', nowait = false },
+          ['od'] = { 'order_by_diagnostics', nowait = false },
+          ['om'] = { 'order_by_modified', nowait = false },
+          ['on'] = { 'order_by_name', nowait = false },
+          ['os'] = { 'order_by_size', nowait = false },
+          ['ot'] = { 'order_by_type', nowait = false },
         },
       },
     },
