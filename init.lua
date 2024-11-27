@@ -572,10 +572,10 @@ require('lazy').setup({
   },
 
   { -- ColorScheme
-    'folke/tokyonight.nvim',
+    'cocopon/iceberg.vim',
     priority = 1000,
     init = function()
-      vim.cmd.colorscheme 'tokyonight-moon'
+      vim.cmd.colorscheme 'iceberg'
       vim.cmd.hi 'Comment gui=none'
     end,
   },
