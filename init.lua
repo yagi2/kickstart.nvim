@@ -526,6 +526,9 @@ require('lazy').setup({
           -- Manually trigger a completion from nvim-cmp.
           ['<C-Space>'] = cmp.mapping.complete {},
 
+          -- Abort the completion.
+          ['<C-e>'] = cmp.mapping.abort(),
+
           -- Think of <c-l> as moving to the right of your snippet expansion.
           -- <c-l> will move you to the right of each of the expansion locations.
           ['<C-l>'] = cmp.mapping(function()
