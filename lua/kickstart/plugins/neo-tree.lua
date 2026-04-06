@@ -9,9 +9,10 @@ return {
     '3rd/image.nvim',
   },
   cmd = 'Neotree',
+  lazy = false,
   keys = {
-    { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
-    { '<C-\\>', ':Neotree float buffers<CR>', desc = 'NeoTree reveal buffers', silent = true },
+    { '\\', ':Neotree reveal<CR>', desc = 'ファイルツリー表示', silent = true },
+    { '<C-\\>', ':Neotree float buffers<CR>', desc = 'バッファ一覧 (ツリー)', silent = true },
   },
   config = function()
     require('neo-tree').setup {

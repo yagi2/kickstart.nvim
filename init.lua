@@ -65,10 +65,10 @@ vim.opt.scrolloff = 10
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = '診断クイックフィックス一覧' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut.
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'ターミナルモード終了' })
 
 -- Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -77,32 +77,36 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
--- Use all of buffer to Copilot chat context
-function CopilotChatBuffer()
-  local input = vim.fn.input 'Quick Chat: '
-  if input ~= '' then
-    require('CopilotChat').ask(input, { selection = require('CopilotChat.select').buffer })
-  end
-end
-
--- Ask Copilot Quickly in <leader>ccq (Copilot Chat Quick)
-vim.api.nvim_set_keymap('n', '<leader>ccq', '<cmd>lua CopilotChatBuffer()<cr>', { noremap = true, silent = true })
-
--- Display Copilot Chat prompt with Telescope
-function ShowCopilotChatActionPrompt()
-  local actions = require 'CopilotChat.actions'
-  require('CopilotChat.integrations.telescope').pick(actions.prompt_actions())
-end
-
--- Display Copilot Chat prompt in <leader>ccp (Copilot Chat Prompt)
-vim.api.nvim_set_keymap('n', '<leader>ccp', '<cmd>lua ShowCopilotChatActionPrompt()<cr>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = '左のウィンドウへ移動' })
+vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = '右のウィンドウへ移動' })
+vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = '下のウィンドウへ移動' })
+vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = '上のウィンドウへ移動' })
 
 -- [[ Basic Autocommands ]]
+-- Show quick reference on startup
+vim.api.nvim_create_autocmd('VimEnter', {
+  group = vim.api.nvim_create_augroup('quick-reference', { clear = true }),
+  callback = function()
+    vim.defer_fn(function()
+      vim.notify(
+        table.concat({
+          'Space     迷ったらこれ（全キー表示）',
+          'Space sf  ファイル検索',
+          '\\         ファイルツリー',
+          'Space xx  エラー一覧',
+          'Space ?   チートシート',
+          '',
+          ':vs       縦分割（左右に並べる）',
+          ':sp       横分割（上下に並べる）',
+          'Ctrl-w q  分割を閉じる',
+        }, '\n'),
+        vim.log.levels.INFO,
+        { title = 'クイックリファレンス', timeout = 10000 }
+      )
+    end, 500)
+  end,
+})
+
 -- Highlight when yanking (copying) text
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
@@ -140,52 +144,21 @@ require('lazy').setup({
   },
   {
     'folke/which-key.nvim',
-    event = 'VimEnter',
+    event = 'VeryLazy',
     opts = {
       icons = {
         mappings = vim.g.have_nerd_font,
-        keys = vim.g.have_nerd_font and {} or {
-          Up = '<Up> ',
-          Down = '<Down> ',
-          Left = '<Left> ',
-          Right = '<Right> ',
-          C = '<C-…> ',
-          M = '<M-…> ',
-          D = '<D-…> ',
-          S = '<S-…> ',
-          CR = '<CR> ',
-          Esc = '<Esc> ',
-          ScrollWheelDown = '<ScrollWheelDown> ',
-          ScrollWheelUp = '<ScrollWheelUp> ',
-          NL = '<NL> ',
-          BS = '<BS> ',
-          Space = '<Space> ',
-          Tab = '<Tab> ',
-          F1 = '<F1>',
-          F2 = '<F2>',
-          F3 = '<F3>',
-          F4 = '<F4>',
-          F5 = '<F5>',
-          F6 = '<F6>',
-          F7 = '<F7>',
-          F8 = '<F8>',
-          F9 = '<F9>',
-          F10 = '<F10>',
-          F11 = '<F11>',
-          F12 = '<F12>',
-        },
       },
       spec = {
-        { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
-        { '<leader>d', group = '[D]ocument' },
-        { '<leader>g', group = '[G]it' },
-        { '<leader>l', group = '[L]SP' },
-        { '<leader>m', group = '[M]iscellaneous' },
-        { '<leader>r', group = '[R]ename' },
-        { '<leader>s', group = '[S]earch' },
-        { '<leader>w', group = '[W]orkspace' },
-        { '<leader>t', group = '[T]oggle' },
-        { '<leader>h', group = '[H]op', mode = { 'n', 'v' } },
+        { '<leader>c', group = 'コード', mode = { 'n', 'x' } },
+        { '<leader>d', group = 'ドキュメント' },
+        { '<leader>g', group = 'Git' },
+        { '<leader>r', group = 'リネーム' },
+        { '<leader>s', group = '検索' },
+        { '<leader>w', group = 'ワークスペース' },
+        { '<leader>t', group = '切り替え' },
+        { '<leader>x', group = '診断' },
+        { '<leader>f', desc = 'フォーマット' },
       },
     },
   },
@@ -229,20 +202,20 @@ require('lazy').setup({
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
-      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
+      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'ヘルプ検索' })
+      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = 'キーマップ検索' })
       vim.keymap.set('n', '<leader>sf', function()
         builtin.find_files {
           find_command = { 'rg', '--files', '--iglob', '!.git', '--hidden' },
         }
-      end, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      end, { desc = 'ファイル検索' })
+      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = 'Telescope一覧' })
+      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = 'カーソル下の単語を検索' })
+      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'テキスト検索 (grep)' })
+      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '診断結果を検索' })
+      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '前回の検索を再開' })
+      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '最近開いたファイル' })
+      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = 'バッファ一覧' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -250,7 +223,7 @@ require('lazy').setup({
           winblend = 10,
           previewer = false,
         })
-      end, { desc = '[/] Fuzzily search in current buffer' })
+      end, { desc = 'バッファ内検索' })
 
       -- It's also possible to pass additional configuration options.
       vim.keymap.set('n', '<leader>s/', function()
@@ -258,12 +231,12 @@ require('lazy').setup({
           grep_open_files = true,
           prompt_title = 'Live Grep in Open Files',
         }
-      end, { desc = '[S]earch [/] in Open Files' })
+      end, { desc = '開いているファイル内を検索' })
 
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
-      end, { desc = '[S]earch [N]eovim files' })
+      end, { desc = 'Neovim設定ファイルを検索' })
     end,
   },
 
@@ -303,31 +276,31 @@ require('lazy').setup({
           end
 
           -- Jump to the definition of the word under your cursor.
-          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('gd', require('telescope.builtin').lsp_definitions, '定義へジャンプ')
 
           -- Find references for the word under your cursor.
-          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('gr', require('telescope.builtin').lsp_references, '参照一覧')
 
           -- Jump to the implementation of the word under your cursor.
-          map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          map('gI', require('telescope.builtin').lsp_implementations, '実装へジャンプ')
 
           -- Jump to the type of the word under your cursor.
-          map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+          map('<leader>D', require('telescope.builtin').lsp_type_definitions, '型定義へジャンプ')
 
           -- Fuzzy find all the symbols in your current document.
-          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, 'シンボル一覧 (ファイル)')
 
           -- Fuzzy find all the symbols in your current workspace.
-          map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+          map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'シンボル一覧 (ワークスペース)')
 
           -- Rename the variable under your cursor.
-          map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+          map('<leader>rn', vim.lsp.buf.rename, 'リネーム')
 
           -- Execute a code action,
-          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
+          map('<leader>ca', vim.lsp.buf.code_action, 'コードアクション', { 'n', 'x' })
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
-          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          map('gD', vim.lsp.buf.declaration, '宣言へジャンプ')
 
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
           local client = vim.lsp.get_client_by_id(event.data.client_id)
@@ -358,7 +331,7 @@ require('lazy').setup({
           if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-            end, '[T]oggle Inlay [H]ints')
+            end, 'インレイヒント切り替え')
           end
         end,
       })
@@ -453,7 +426,7 @@ require('lazy').setup({
           require('conform').format { async = true, lsp_format = 'fallback' }
         end,
         mode = '',
-        desc = '[F]ormat buffer',
+        desc = 'フォーマット',
       },
     },
     opts = {
@@ -569,7 +542,6 @@ require('lazy').setup({
             name = 'lazydev',
             group_index = 0,
           },
-          { name = 'copilot' },
           { name = 'nvim_lsp' },
           { name = 'path' },
         },
@@ -577,14 +549,7 @@ require('lazy').setup({
     end,
   },
 
-  { -- ColorScheme
-    'cocopon/iceberg.vim',
-    priority = 1000,
-    init = function()
-      vim.cmd.colorscheme 'iceberg'
-      vim.cmd.hi 'Comment gui=none'
-    end,
-  },
+  -- ColorScheme is configured in lua/custom/plugins/catppuccin.lua
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
@@ -629,7 +594,6 @@ require('lazy').setup({
     opts = {},
   },
 
-  require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
