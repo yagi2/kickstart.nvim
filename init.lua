@@ -96,6 +96,10 @@ vim.api.nvim_create_autocmd('VimEnter', {
           'Space xx  エラー一覧',
           'Space ?   チートシート',
           '',
+          'gd        定義へジャンプ',
+          'gr        参照一覧（使われている箇所）',
+          'Ctrl-o    前の位置に戻る',
+          '',
           ':vs       縦分割（左右に並べる）',
           ':sp       横分割（上下に並べる）',
           'Ctrl-w q  分割を閉じる',
@@ -267,6 +271,17 @@ require('lazy').setup({
       'hrsh7th/cmp-nvim-lsp',
     },
     config = function()
+      -- Kotlin LSP: Gradle 依存を解決できないため診断を抑制
+      vim.api.nvim_create_autocmd('LspAttach', {
+        group = vim.api.nvim_create_augroup('kotlin-lsp-diagnostics', { clear = true }),
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if client and client.name == 'kotlin_language_server' then
+            vim.diagnostic.enable(false, { bufnr = args.buf })
+          end
+        end,
+      })
+
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
