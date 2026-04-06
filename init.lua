@@ -100,6 +100,10 @@ vim.api.nvim_create_autocmd('VimEnter', {
           'gr        参照一覧（使われている箇所）',
           'Ctrl-o    前の位置に戻る',
           '',
+          'Space gv  変更ファイル一覧 (diff)',
+          'Space gp  変更をインライン表示',
+          ']h / [h   次/前の変更箇所へ',
+          '',
           ':vs       縦分割（左右に並べる）',
           ':sp       横分割（上下に並べる）',
           'Ctrl-w q  分割を閉じる',
@@ -144,6 +148,19 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+      on_attach = function(bufnr)
+        local gs = require 'gitsigns'
+        local function map(mode, l, r, opts)
+          opts = opts or {}
+          opts.buffer = bufnr
+          vim.keymap.set(mode, l, r, opts)
+        end
+        map('n', ']h', gs.next_hunk, { desc = '次の変更箇所へ' })
+        map('n', '[h', gs.prev_hunk, { desc = '前の変更箇所へ' })
+        map('n', '<leader>gp', gs.preview_hunk_inline, { desc = '変更をインライン表示' })
+        map('n', '<leader>gr', gs.reset_hunk, { desc = '変更を元に戻す' })
+        map('n', '<leader>gd', gs.diffthis, { desc = '差分を表示' })
+      end,
     },
   },
   {
@@ -319,7 +336,7 @@ require('lazy').setup({
 
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
           local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
             local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
               buffer = event.buf,
@@ -343,7 +360,7 @@ require('lazy').setup({
           end
 
           -- The following code creates a keymap to toggle inlay hints in your code.
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, 'インレイヒント切り替え')
@@ -366,22 +383,44 @@ require('lazy').setup({
 
       -- Enable the following language servers
       local servers = {
-        arduino_language_server = {},
+        -- Shell / Infrastructure
         bashls = {},
-        cmake = {},
+        dockerls = {},
+        docker_compose_language_service = {},
+
+        -- Web (TypeScript / JavaScript / CSS / HTML)
+        ts_ls = {},
+        eslint = {},
         cssls = {},
         css_variables = {},
-        cssmodules_ls = {},
-        denols = {},
-        docker_compose_language_service = {},
-        dockerls = {},
-        eslint = {},
-        golangci_lint_ls = {},
-        gopls = {},
-        gradle_ls = {},
-        graphql = {},
+        tailwindcss = {},
         html = {},
+        graphql = {},
+        prismals = {},
+
+        -- Data / Config
+        yamlls = {},
+        jsonls = {},
+
+        -- Go
+        gopls = {},
+        golangci_lint_ls = {},
+
+        -- Mobile
         kotlin_language_server = {},
+        gradle_ls = {},
+
+        -- Ruby
+        ruby_lsp = {},
+        rubocop = {},
+
+        -- Python
+        pylsp = {},
+
+        -- SQL
+        sqls = {},
+
+        -- Lua (neovim config)
         lua_ls = {
           settings = {
             Lua = {
@@ -391,20 +430,8 @@ require('lazy').setup({
             },
           },
         },
-        nginx_language_server = {},
-        nextls = {},
-        phpactor = {},
-        prismals = {},
-        pylsp = {},
-        rubocop = {},
-        ruby_lsp = {},
-        rust_analyzer = {},
-        sqls = {},
-        swift_mesonls = {},
-        tailwindcss = {},
-        terraformls = {},
-        tflint = {},
-        ts_ls = {},
+
+        -- Vim
         vimls = {},
       }
 
@@ -427,6 +454,26 @@ require('lazy').setup({
           end,
         },
       }
+
+      -- Swift: sourcekit-lsp (Xcode 付属、Mason 管理外)
+      if vim.fn.executable 'sourcekit-lsp' == 1 then
+        vim.lsp.config('sourcekit', {
+          cmd = { 'sourcekit-lsp' },
+          filetypes = { 'swift' },
+          capabilities = capabilities,
+        })
+        vim.lsp.enable('sourcekit')
+      end
+
+      -- Dart: dartls (Dart SDK 付属、Mason 管理外)
+      if vim.fn.executable 'dart' == 1 then
+        vim.lsp.config('dartls', {
+          cmd = { 'dart', 'language-server', '--protocol=lsp' },
+          filetypes = { 'dart' },
+          capabilities = capabilities,
+        })
+        vim.lsp.enable('dartls')
+      end
     end,
   },
 
@@ -461,6 +508,20 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        go = { 'goimports', 'gofmt' },
+        swift = { 'swiftformat' },
+        kotlin = { 'ktlint' },
+        dart = { 'dart_format' },
+        yaml = { 'yamlfmt' },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        json = { 'prettierd', 'prettier', stop_after_first = true },
+        css = { 'prettierd', 'prettier', stop_after_first = true },
+        scss = { 'prettierd', 'prettier', stop_after_first = true },
+        html = { 'prettierd', 'prettier', stop_after_first = true },
+        markdown = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
@@ -594,7 +655,12 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs',
     -- [[ Configure Treesitter ]]
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = {
+        'bash', 'css', 'dart', 'diff', 'dockerfile', 'go', 'gomod', 'gosum',
+        'graphql', 'html', 'javascript', 'json', 'kotlin', 'lua', 'luadoc',
+        'markdown', 'markdown_inline', 'query', 'ruby', 'scss',
+        'sql', 'toml', 'tsx', 'typescript', 'vim', 'vimdoc', 'yaml',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
